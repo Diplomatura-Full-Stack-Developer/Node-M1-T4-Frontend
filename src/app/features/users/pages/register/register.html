@@ -1,0 +1,59 @@
+<h1 class="text-center my-4">{{ title }}</h1>
+@if (error(); as errorMessage) {
+  <div class="text-accent-600 text-center text-2xl font-bold">{{ errorMessage }}</div>
+}
+<form
+  [formGroup]="userForm"
+  (ngSubmit)="onSubmit()"
+  class="flex flex-col gap-2 max-w-md mx-auto p-4"
+>
+  <label for="name">Nombre:</label>
+  <input
+    type="text"
+    id="name"
+    formControlName="name"
+    [ngClass]="{
+      'border-red-500': isInvalid('name'),
+    }"
+  />
+  @if (errorMessage('name'); as error) {
+    <p>{{ error }}</p>
+  }
+
+  <label for="email">Email:</label>
+  <input
+    type="text"
+    id="email"
+    formControlName="email"
+    [ngClass]="{
+      'border-red-500': isInvalid('email'),
+    }"
+  />
+  @if (errorMessage('email'); as error) {
+    <p>{{ error }}</p>
+  }
+
+  <label for="password">Contraseña:</label>
+  <input
+    type="text"
+    id="password"
+    formControlName="password"
+    [ngClass]="{
+      'border-red-500': isInvalid('password'),
+    }"
+  />
+  @if (errorMessage('password'); as error) {
+    <p>{{ error }}</p>
+  }
+
+  <button
+    type="submit"
+    [disabled]="userForm.invalid"
+    [ngClass]="{
+      'cursor-not-allowed! bg-gray-500! opacity-60 text-black!': userForm.invalid,
+    }"
+    class="bg-primary-500 text-white/80 rounded-md p-2 cursor-pointer font-bold mx-auto my-4"
+  >
+    Registrarse
+  </button>
+</form>

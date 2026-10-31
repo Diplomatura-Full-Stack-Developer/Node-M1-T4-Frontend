@@ -1,0 +1,15 @@
+<div class="flex flex-col gap-4 p-6">
+  <p class="text-accent-700 text-center font-bold">{{ data.title }}</p>
+  @if (data.message) {
+    <p class="text-black/80 font-bold text-start">
+      El producto se agregó con fecha: {{ data.message | date: 'dd/MM/yyyy HH:mm' }}
+    </p>
+  }
+  <button
+    type="button"
+    mat-dialog-close
+    class="bg-primary-500 text-white rounded-md p-2 cursor-pointer font-bold"
+  >
+    Cerrar
+  </button>
+</div>

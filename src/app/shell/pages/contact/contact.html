@@ -1,0 +1,36 @@
+<section class="grid grid-cols-1 lg:grid-cols-2 gap-4 p-4">
+  @for (branch of branches(); track branch.province) {
+    <div
+      class="bg-primary-200 rounded-lg shadow-lg transform-3d hover:scale-103 transition-all duration-300 flex flex-col p-4"
+    >
+      <div class="flex flex-col items-center md:flex-col">
+        <img
+          src="{{ branch.imageUrl }}"
+          alt="{{ branch.province }}"
+          loading="lazy"
+          decoding="async"
+          class="w-full object-cover rounded-md md:rounded-lg h-48 aspect-video"
+        />
+        <div class="flex flex-row items-center justify-between w-full px-4">
+          <h2 class="text-xl font-bold text-secondary-600 text-shadow-lg">{{ branch.province }}</h2>
+          <h3 class="text-md font-bold text-accent-700 text-shadow-lg">{{ branch.city }}</h3>
+        </div>
+      </div>
+      <p class="text-sm text-black/80 text-shadow-lg">
+        <span class="font-bold">Dirección:</span> {{ branch.address }}
+      </p>
+      <p class="text-sm text-black/80 text-shadow-lg">
+        <span class="font-bold">Email de atención al cliente:</span>
+        {{ branch.customerServiceEmail }}
+      </p>
+      <div class="flex flex-col">
+        @for (network of socialNetworks; track network.name) {
+          <p class="text-sm text-black/80 text-shadow-lg">
+            <mat-icon class="text-black/80 w-6 h-6" [svgIcon]="network.icon"></mat-icon>
+            {{ network.description }}
+          </p>
+        }
+      </div>
+    </div>
+  }
+</section>

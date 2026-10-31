@@ -1,0 +1,24 @@
+<div class="flex justify-center">
+  <button
+    routerLink="/add-product"
+    class="bg-primary-500 text-white px-4 py-2 rounded-md cursor-pointer m-4"
+  >
+    Agregar producto
+  </button>
+  <input
+    type="text"
+    placeholder="Buscar producto"
+    class="border-2 border-primary-500 rounded-md p-2 m-4"
+    (input)="onSearch($event)"
+  />
+</div>
+
+<div class="grid grid-cols-[repeat(auto-fit,minmax(20rem,1fr))] gap-4 p-4">
+  @if (error(); as errorMessage) {
+    <div class="text-accent-600 text-center text-2xl font-bold">{{ errorMessage }}</div>
+  } @else {
+    @for (product of filteredProducts(); track product.id) {
+      <app-product-card [product]="product"></app-product-card>
+    }
+  }
+</div>

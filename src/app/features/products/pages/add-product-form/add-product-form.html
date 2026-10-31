@@ -1,0 +1,112 @@
+<h1 class="text-center my-4">{{ title }}</h1>
+@if (error(); as errorMessage) {
+  <div class="text-accent-600 text-center text-2xl font-bold">{{ errorMessage }}</div>
+}
+<form
+  [formGroup]="productForm"
+  (ngSubmit)="onSubmit()"
+  class="flex flex-col gap-2 max-w-md mx-auto p-4"
+>
+  <label for="category">Categoría:</label>
+  <input
+    type="text"
+    id="category"
+    formControlName="category"
+    [ngClass]="{
+      'border-red-500': isInvalid('category'),
+    }"
+  />
+  @if (errorMessage('category'); as error) {
+    <p>{{ error }}</p>
+  }
+
+  <label for="brand">Marca:</label>
+  <input
+    type="text"
+    id="brand"
+    formControlName="brand"
+    [ngClass]="{
+      'border-red-500': isInvalid('brand'),
+    }"
+  />
+  @if (errorMessage('brand'); as error) {
+    <p>{{ error }}</p>
+  }
+
+  <label for="model">Modelo:</label>
+  <input
+    type="text"
+    id="model"
+    formControlName="model"
+    [ngClass]="{
+      'border-red-500': isInvalid('model'),
+    }"
+  />
+  @if (errorMessage('model'); as error) {
+    <p>{{ error }}</p>
+  }
+
+  <label for="price">Precio:</label>
+  <input
+    type="number"
+    id="price"
+    formControlName="price"
+    [ngClass]="{
+      'border-red-500': isInvalid('price'),
+    }"
+  />
+  @if (errorMessage('price'); as error) {
+    <p>{{ error }}</p>
+  }
+
+  <label for="discount">Descuento (%):</label>
+  <input
+    type="number"
+    id="discount"
+    formControlName="discount"
+    [ngClass]="{
+      'border-red-500': isInvalid('discount'),
+    }"
+  />
+
+  @if (errorMessage('discount'); as error) {
+    <p>{{ error }}</p>
+  }
+
+  <label for="stock">Stock</label>
+  <input
+    type="number"
+    id="stock"
+    formControlName="stock"
+    [ngClass]="{
+      'border-red-500': isInvalid('stock'),
+    }"
+  />
+  @if (errorMessage('stock'); as error) {
+    <p>{{ error }}</p>
+  }
+
+  <label for="features">Características:</label>
+  <input
+    type="textarea"
+    id="features"
+    formControlName="features"
+    [ngClass]="{
+      'border-red-500': isInvalid('features'),
+    }"
+  />
+  @if (errorMessage('features'); as error) {
+    <p>{{ error }}</p>
+  }
+
+  <button
+    type="submit"
+    [disabled]="productForm.invalid"
+    [ngClass]="{
+      'cursor-not-allowed! bg-gray-500! opacity-60 text-black!': productForm.invalid,
+    }"
+    class="bg-primary-500 text-white/80 rounded-md p-2 cursor-pointer font-bold mx-auto my-4"
+  >
+    Agregar producto
+  </button>
+</form>

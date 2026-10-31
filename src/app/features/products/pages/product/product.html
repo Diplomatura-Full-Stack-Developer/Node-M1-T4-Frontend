@@ -1,0 +1,61 @@
+@if (product(); as product) {
+  <mat-card
+    class="example-card justify-between items-center bg-primary-100/80! shadow-lg! border-none! m-4"
+    appearance="outlined"
+  >
+    <mat-card-header class="text-center my-2">
+      @if (error(); as errorMessage) {
+        <div class="text-accent-600 text-center text-2xl font-bold">{{ errorMessage }}</div>
+      }
+      <mat-card-title class="text-lg font-bold text-shadow-sm text-primary-600">{{
+        product.category
+      }}</mat-card-title>
+      <mat-card-subtitle class="text-sm text-secondary-500! font-bold text-shadow-sm">{{
+        product.brand
+      }}</mat-card-subtitle>
+    </mat-card-header>
+    <img
+      mat-card-xl-image
+      [src]="product.imageUrl"
+      alt="Photo of a Shiba Inu"
+      class="w-full h-36 object-contain"
+    />
+    <mat-card-content class="text-sm text-gray-700 text-shadow-sm my-2">
+      <p><span class="font-bold">Modelo: </span> {{ product.model }}</p>
+      <p><span class="font-bold">Precio: </span> {{ product.price | currency: '$ ' }}</p>
+
+      @if (product.discount > 0) {
+        <p class="text-accent-600 font-bold">
+          <span class="font-bold">Precio con descuento: </span>
+          {{ product.price | discount: product.discount! | currency: '$ ' }}
+        </p>
+      }
+
+      @if (availableStock() > 0) {
+        <p>
+          <span class="font-bold">Stock: </span>
+          {{ availableStock() }}
+        </p>
+      }
+    </mat-card-content>
+    <mat-card-actions>
+      <div class="flex flex-col items-center justify-center">
+        <button
+          matButton
+          class="bg-accent-600 text-white"
+          [disabled]="!canAddToCart() || !isLogged()"
+          (click)="addProductToCart(product.id)"
+        >
+          {{ canAddToCart() ? 'Agregar al carrito' : 'No hay stock disponible' }}
+        </button>
+        @if (!isLogged()) {
+          <p class="text-accent-600 text-center text-sm font-bold">
+            Debes iniciar sesión para agregar productos al carrito
+          </p>
+        }
+      </div>
+    </mat-card-actions>
+  </mat-card>
+} @else {
+  <div class="text-accent-600 text-center text-2xl font-bold">Producto no encontrado</div>
+}

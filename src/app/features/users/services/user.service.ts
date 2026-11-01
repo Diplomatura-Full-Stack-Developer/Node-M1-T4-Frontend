@@ -6,15 +6,23 @@ import { catchError, of, BehaviorSubject } from 'rxjs';
 @Service()
 export class UserService {
 
-  private apiUrl = 'data/users.json';
+  private apiUrl = 'http://localhost:3000';
 
   private http = inject(HttpClient);
 
-  private persist(): void {
-    localStorage.setItem('users', JSON.stringify(this.users()));
-  }
 
   users = signal<IUser[]>([]);
+
+  getUsers(): void {
+    this.http.get<IUser[]>(`${this.apiUrl}/users`).pipe(
+      catchError((error) => {
+        this._error.set(`Error loading users: ${error.message}`);
+        return of([]);
+      }),
+    ).subscribe((data) => {
+      this.users.set(data);
+    });
+  }
 
   private readonly sessionSubject = new BehaviorSubject<IUser | undefined>(
     this.readStoredSession(),
@@ -31,31 +39,8 @@ export class UserService {
   private readonly _error = signal<string | null>(null);
   readonly error = this._error.asReadonly();
 
-  seedUsers(): void {
-    const stored = localStorage.getItem('users');
-    if (stored !== null) {
-      this.users.set(JSON.parse(stored) as IUser[]);
-      return;
-    }
-
-    this.http.get<IUser[]>(this.apiUrl).pipe(
-      catchError((error) => {
-        this._error.set(`Error loading users: ${error.message}`);
-        return of([]);
-      }),
-    ).subscribe((data) => {
-      if (data.length === 0 && this._error()) {
-        return;
-      }
-      const withIds = data.map((u) => ({ ...u, id: crypto.randomUUID() }));
-      this.users.set(withIds);
-      this.persist();
-    });
-  }
-
   registerUser(user: IUser): void {
     this.users.update((users) => [...users, user]);
-    this.persist();
   }
 
   loginUser(email: string, password: string): void {
@@ -73,6 +58,5 @@ export class UserService {
     localStorage.removeItem('session');
   } deleteUser(id: string): void {
     this.users.update((users) => users.filter((user) => user.id !== id));
-    this.persist();
   }
 }

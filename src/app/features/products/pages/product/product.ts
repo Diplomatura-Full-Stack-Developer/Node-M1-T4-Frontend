@@ -13,6 +13,7 @@ import { ICartProduct } from '../../interfaces/product.interface';
 import { Router } from '@angular/router';
 import { MatIconModule } from '@angular/material/icon';
 import { UserService } from '../../../users/services/user.service';
+import { IProduct } from '../../interfaces/product.interface';
 @Component({
   selector: 'app-product',
   imports: [MatButtonModule, MatCardModule, CurrencyPipe, DiscountPipe, MatIconModule],
@@ -34,21 +35,21 @@ export class Product {
     this.route.paramMap.pipe(map((params) => params.get('id'))),
   );
 
-  product = computed(() => {
+  ngOnInit(): void {
+    this.productService.getProductById(this.productId() as string);
+  }
+
+  product = computed((): IProduct | undefined => {
     const id = this.productId();
     if (!id) {
       return undefined;
     }
-    return this.productService.getProductById(id);
+    return this.productService.products().find((item) => item.id === id);
   });
 
 
-  ngOnInit(): void {
-    this.productService.seedProducts();
-  }
-
   availableStock = computed(() => {
-    const current = this.product();
+    const current = this.product() as unknown as IProduct;
     if (!current) {
       return 0;
     }
@@ -58,9 +59,8 @@ export class Product {
 
   canAddToCart = computed(() => this.availableStock() > 0);
 
-
   addProductToCart(id: string): void {
-    this.productService.addProductToCart(this.product() as ICartProduct);
+    this.productService.addProductToCart(this.product() as unknown as ICartProduct);
     this.router.navigate(['/products-cart']);
   }
 }

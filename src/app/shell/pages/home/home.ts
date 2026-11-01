@@ -21,7 +21,7 @@ export class Home implements OnInit {
   );
 
   ngOnInit(): void {
-    this.productService.seedProducts();
+    this.productService.getProducts();
   }
 
 

@@ -8,14 +8,10 @@ import { catchError, of } from 'rxjs';
 @Service()
 export class ProductService {
 
-  private apiUrl = 'data/products.json';
+  private apiUrl = 'http://localhost:3000';
 
   private http = inject(HttpClient);
 
-  private persist(): void {
-    localStorage.setItem('products', JSON.stringify(this.products()));
-    localStorage.setItem('cart', JSON.stringify(this.cart()));
-  }
 
   products = signal<IProduct[]>([]);
   cart = signal<ICartProduct[]>([]);
@@ -23,37 +19,46 @@ export class ProductService {
   private readonly _error = signal<string | null>(null);
   readonly error = this._error.asReadonly();
 
-  seedProducts(): void {
-    const stored = localStorage.getItem('products');
-    if (stored !== null) {
-      this.products.set(JSON.parse(stored) as IProduct[]);
-      return;
-    }
-
-    this.http.get<IProduct[]>(this.apiUrl).pipe(
-      catchError((error) => {
-        this._error.set(`Error loading products: ${error.message}`);
-        return of([]);
-      }),
-    ).subscribe((data) => {
-      if (data.length === 0 && this._error()) {
-        return;
-      }
-      const withIds = data.map((p) => ({ ...p, id: crypto.randomUUID(), createdAt: new Date(), deleted: false }));
-      this.products.set(withIds);
-      this._error.set(null);
-      this.persist();
-    });
+  private toProduct(raw: IProduct & { _id?: string }): IProduct {
+    return {
+      ...raw,
+      id: raw.id ?? String(raw._id),
+    };
   }
 
-  getProductById(id: string): IProduct | undefined {
-    return this.products().find((p) => p.id === id);
+  getProducts(): void {
+    this.http
+      .get<Array<IProduct & { _id?: string }>>(`${this.apiUrl}/products`)
+      .pipe(
+        catchError((error: { message: string }) => {
+          this._error.set(`Error loading products: ${error.message}`);
+          return of([]);
+        }),
+      )
+      .subscribe((data) => {
+        this.products.set(data.map((item) => this.toProduct(item)));
+      });
   }
 
+  getProductById(id: string): void {
+    this.http
+      .get<{ message: string; data: IProduct & { _id?: string } }>(
+        `${this.apiUrl}/products/${id}`,
+      )
+      .pipe(
+        catchError((error: { message: string }) => {
+          this._error.set(`Error loading product: ${error.message}`);
+          return of(null);
+        }),
+      )
+      .subscribe((response) => {
+        const raw = response?.data;
+        this.products.set(raw ? [this.toProduct(raw)] : []);
+      });
+  }
   addProduct(product: IProduct): void {
     try {
       this.products.update((list) => [...list, product]);
-      this.persist();
     } catch (error) {
       this._error.set(`Error adding product: ${error as string}`);
     }
@@ -64,7 +69,6 @@ export class ProductService {
       this.products.update((list) =>
         list.map((p) => (p.id === id ? { ...p, deleted: true } : p)),
       );
-      this.persist();
     } catch (error) {
       this._error.set(`Error deleting product: ${error as string}`);
     }
@@ -95,7 +99,6 @@ export class ProductService {
         { ...catalog, stock: catalog.stock - 1, quantity: 1 },
       ]);
     }
-    this.persist();
   }
 
 
@@ -109,7 +112,6 @@ export class ProductService {
         )
         .filter((item) => item.quantity > 0),
     );
-    this.persist();
   }
   searchProducts(search: string) {
     return this.products().filter((p) => p.category.toLowerCase().includes(search.toLowerCase()));

@@ -42,7 +42,7 @@ export class Login {
   }
 
   ngOnInit() {
-    this.userService.seedUsers()
+    this.userService.getUsers();
   }
 
 

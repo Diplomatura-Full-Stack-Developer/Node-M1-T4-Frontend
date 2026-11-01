@@ -16,7 +16,7 @@ export default class ProductsCart {
   cart = computed(() => this.productService.cart());
 
   ngOnInit(): void {
-    this.productService.seedProducts();
+    this.productService.getProducts();
 
   }
 

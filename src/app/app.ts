@@ -10,7 +10,7 @@ import { IconService } from './services/icon.service';
   templateUrl: './app.html',
 })
 export class App {
-  protected readonly title = signal('angular-m1-t3');
+  protected readonly title = signal('node-m1-t4');
 
 
   constructor(private router: Router, private iconService: IconService) {

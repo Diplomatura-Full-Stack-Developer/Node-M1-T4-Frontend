@@ -4,6 +4,7 @@ import { UserService } from '../../features/users/services/user.service';
 import { inject } from '@angular/core';
 import { RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { IUser } from '../../features/users/interfaces/user.interface';
 @Component({
   selector: 'app-footer',
   imports: [MatIconModule, RouterLink],
@@ -13,7 +14,7 @@ export class Footer {
 
   private userService = inject(UserService);
 
-  session = toSignal(this.userService.session$, { initialValue: undefined });
+  user = computed(() => this.userService.user() as unknown as IUser | undefined);
 
   menuItems = computed<{ label: string; routerLink?: string; action?: () => void }[]>(() => [
     {
@@ -28,7 +29,7 @@ export class Footer {
       label: 'Contacto',
       routerLink: '/contact'
     },
-    ...(this.session() ? [
+    ...(this.user() ? [
       {
         label: 'Cerrar sesión',
         action: () => this.logout()
@@ -42,7 +43,7 @@ export class Footer {
   ]);
 
   logout = () => {
-    this.userService.logoutUser();
+    this.userService.user.set(undefined);
   };
 
 

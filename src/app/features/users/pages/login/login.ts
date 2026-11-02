@@ -25,7 +25,6 @@ export class Login {
   private userService = inject(UserService);
   private router = inject(Router);
 
-  error = this.userService.error;
 
   userForm = this.formBuilder.group({
     email: ['', USER_FORM_SCHEMA.email.validators],
@@ -42,7 +41,6 @@ export class Login {
   }
 
   ngOnInit() {
-    this.userService.getUsers();
   }
 
 

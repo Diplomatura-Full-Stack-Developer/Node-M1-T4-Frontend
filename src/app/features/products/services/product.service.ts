@@ -1,5 +1,5 @@
 import { inject, Service, signal } from '@angular/core';
-import { ICartProduct, IProduct } from '../interfaces/product.interface';
+import { IProduct } from '../interfaces/product.interface';
 import { HttpClient } from '@angular/common/http';
 import { catchError, of } from 'rxjs';
 
@@ -14,7 +14,6 @@ export class ProductService {
 
 
   products = signal<IProduct[]>([]);
-  cart = signal<ICartProduct[]>([]);
 
   private readonly _error = signal<string | null>(null);
   readonly error = this._error.asReadonly();
@@ -56,70 +55,28 @@ export class ProductService {
         this.products.set(raw ? [this.toProduct(raw)] : []);
       });
   }
+
+
   addProduct(product: IProduct): void {
-    try {
-      this.products.update((list) => [...list, product]);
-    } catch (error) {
-      this._error.set(`Error adding product: ${error as string}`);
-    }
+    this.http.post<IProduct & { _id?: string }>(`${this.apiUrl}/product`, product)
+      .pipe(
+        catchError((error: { message: string }) => {
+          this._error.set(`Error adding product: ${error.message}`);
+          return of(null);
+        }),
+      )
+      .subscribe((response) => {
+        this.products.set([this.toProduct(response as IProduct & { _id?: string })]);
+      });
   }
 
   deleteProduct(id: string): void {
-    try {
-      this.products.update((list) =>
-        list.map((p) => (p.id === id ? { ...p, deleted: true } : p)),
-      );
-    } catch (error) {
-      this._error.set(`Error deleting product: ${error as string}`);
-    }
   }
 
-  addProductToCart(product: IProduct): void {
-    const catalog = this.products().find((item) => item.id === product.id);
-    if (!catalog || catalog.stock <= 0) {
-      return;
-    }
-
-    const inCart = this.cart().find((item) => item.id === product.id);
-
-    if (inCart) {
-      if (inCart.stock <= 0) {
-        return;
-      }
-      this.cart.update((list) =>
-        list.map((item) =>
-          item.id === product.id
-            ? { ...item, stock: item.stock - 1, quantity: item.quantity + 1 }
-            : item,
-        ),
-      );
-    } else {
-      this.cart.update((list) => [
-        ...list,
-        { ...catalog, stock: catalog.stock - 1, quantity: 1 },
-      ]);
-    }
-  }
-
-
-  removeProductFromCart(id: string): void {
-    this.cart.update((list) =>
-      list
-        .map((item) =>
-          item.id === id
-            ? { ...item, stock: item.stock + 1, quantity: item.quantity - 1 }
-            : item,
-        )
-        .filter((item) => item.quantity > 0),
-    );
-  }
   searchProducts(search: string) {
     return this.products().filter((p) => p.category.toLowerCase().includes(search.toLowerCase()));
   }
 
 
-  totalQuantityInCart(): number {
-    return this.cart().reduce((acc, product) => acc + (product as ICartProduct).quantity, 0);
-  }
 
 }

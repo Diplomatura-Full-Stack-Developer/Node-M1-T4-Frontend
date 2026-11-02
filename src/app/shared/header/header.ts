@@ -6,6 +6,9 @@ import { ProductService } from '../../features/products/services/product.service
 import { Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { toSignal } from '@angular/core/rxjs-interop';
+import { IUser } from '../../features/users/interfaces/user.interface';
+import { CartService } from '../../features/cart/services/cart.service'
+
 
 
 @Component({
@@ -17,12 +20,12 @@ export class Header {
 
   private router = inject(Router);
   private userService = inject(UserService);
-  private productService = inject(ProductService);
+  public cartService = inject(CartService);
 
-  totalCartQuantity = computed(() => this.productService.totalQuantityInCart());
+  // totalCartQuantity = computed(() => this.productService.totalQuantityInCart());
 
-  session = toSignal(this.userService.session$, { initialValue: undefined });
-  setTitle = computed(() => this.session()?.name ? `Hola, ${this.session()?.name}` : 'Angular');
+  user = computed(() => this.userService.user() as unknown as IUser | undefined);
+  setTitle = computed(() => this.user()?.name ? `Hola, ${this.user()?.name}` : 'Angular');
 
   openCart = () => {
     this.router.navigate(['/products-cart']);

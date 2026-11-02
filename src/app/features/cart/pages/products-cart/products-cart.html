@@ -12,22 +12,22 @@
       </tr>
     </thead>
     <tbody class="text-left w-full">
-      @for (product of cart(); track product.id) {
+      @for (product of products(); track product.id) {
         <tr>
           <td>{{ product.category }}</td>
           <td>{{ product.brand }}</td>
           <td>{{ product.model }}</td>
           <td>{{ product.price | currency: 'ARS' : 'symbol-narrow' : '1.2-2' }}</td>
           <td>{{ product.stock }}</td>
-          <td>{{ product.quantity }}</td>
+          <!-- <td>{{ product.quantity }}</td> -->
           <td>
-            <button
+            <!-- <button
               matIconButton
               (click)="removeProductFromCart(product.id)"
               class="text-accent-600! hover:text-accent-700! cursor-pointer"
             >
               <mat-icon>delete</mat-icon>
-            </button>
+            </button> -->
           </td>
         </tr>
       }
@@ -38,7 +38,7 @@
 <div class="flex flex-col gap-4 p-4 md:hidden">
   <article class="flex justify-between items-center">
     <dl class="w-full">
-      @for (product of cart(); track product.id) {
+      @for (product of products(); track product.id) {
         <div class="flex flex-col gap-2 border-b p-4 bg-primary-100 rounded-lg shadow-lg m-4">
           <dt><span class="font-bold">Categoría:</span> {{ product.category }}</dt>
           <dt><span class="font-bold">Marca:</span> {{ product.brand }}</dt>
@@ -48,15 +48,15 @@
             {{ product.price | currency: 'ARS' : 'symbol-narrow' : '1.2-2' }}
           </dt>
           <dt><span class="font-bold">Stock:</span> {{ product.stock }}</dt>
-          <dt><span class="font-bold">Cantidad:</span> {{ product.quantity }}</dt>
+          <!-- <dt><span class="font-bold">Cantidad:</span> {{ product.quantity }}</dt> -->
           <dt>
-            <button
+            <!-- <button
               matIconButton
               (click)="removeProductFromCart(product.id)"
               class="text-accent-600! hover:text-accent-700! cursor-pointer"
             >
               <mat-icon>delete</mat-icon>
-            </button>
+            </button> -->
           </dt>
         </div>
       }
@@ -64,8 +64,8 @@
   </article>
 </div>
 
-@if (cart().length === 0) {
+<!-- @if (cart().length === 0) {
   <h2 class="text-2xl font-bold text-center text-primary-500! mt-10">
     No hay productos en el carrito
   </h2>
-}
+} -->

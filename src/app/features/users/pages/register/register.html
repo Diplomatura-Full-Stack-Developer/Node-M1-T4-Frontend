@@ -1,7 +1,7 @@
 <h1 class="text-center my-4">{{ title }}</h1>
-@if (error(); as errorMessage) {
+<!-- @if (error(); as errorMessage) {
   <div class="text-accent-600 text-center text-2xl font-bold">{{ errorMessage }}</div>
-}
+} -->
 <form
   [formGroup]="userForm"
   (ngSubmit)="onSubmit()"

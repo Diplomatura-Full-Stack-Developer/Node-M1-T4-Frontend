@@ -8,7 +8,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatButtonModule } from '@angular/material/button';
 import { MatIcon } from '@angular/material/icon';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { IUser } from '../../../features/users/interfaces/user.interface';
 @Component({
   selector: 'app-navbar',
   imports: [RouterLink, MatIconModule, MatMenuModule, MatButtonModule, MatIcon],
@@ -17,7 +17,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 export class Navbar {
 
   private userService = inject(UserService);
-  session = toSignal(this.userService.session$, { initialValue: undefined });
+  user = computed(() => this.userService.user() as unknown as IUser | undefined);
 
   menuItems = computed<{ label: string; routerLink?: string; action?: () => void }[]>(() => [
     {
@@ -32,7 +32,7 @@ export class Navbar {
       label: 'Contacto',
       routerLink: '/contact'
     },
-    ...(this.session() ? [
+    ...(this.user() ? [
       {
         label: 'Cerrar sesión',
         action: () => this.logout()
@@ -48,7 +48,7 @@ export class Navbar {
 
 
   logout = () => {
-    this.userService.logoutUser();
+    this.userService.user.set(undefined);
   };
 
 }

@@ -13,6 +13,3 @@ export interface IProduct {
   createdAt: Date;
 }
 
-export interface ICartProduct extends IProduct {
-  quantity: number;
-}

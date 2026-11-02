@@ -38,7 +38,7 @@ export const routes: Routes = [
       },
       {
         path: 'products-cart',
-        loadComponent: () => import('./features/products/pages/products-cart/products-cart')
+        loadComponent: () => import('./features/cart/pages/products-cart/products-cart')
       },
     ],
   },

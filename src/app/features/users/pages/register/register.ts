@@ -25,7 +25,6 @@ export class Register {
   private userService = inject(UserService);
   private router = inject(Router);
 
-  error = this.userService.error;
 
   userForm = this.formBuilder.group({
     name: ['', USER_FORM_SCHEMA.name.validators],
@@ -56,7 +55,6 @@ export class Register {
     } as unknown as IUser;
 
 
-    this.userService.registerUser(user);
     this.userForm.reset();
     this.router.navigate(['']);
   }

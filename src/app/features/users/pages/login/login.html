@@ -1,7 +1,7 @@
 <h1 class="text-center my-4">{{ title }}</h1>
-@if (error(); as errorMessage) {
+<!-- @if (error(); as errorMessage) {
   <div class="text-accent-600 text-center text-2xl font-bold">{{ errorMessage }}</div>
-}
+} -->
 <form
   [formGroup]="userForm"
   (ngSubmit)="onSubmit()"
@@ -44,6 +44,9 @@
     Iniciar sesión
   </button>
   <p class="text-center">
-    ¿No tienes una cuenta? <a type="button" class='text-primary-500 underline font-bold' [routerLink]="['/register']">Registrarse aquí</a>
+    ¿No tienes una cuenta?
+    <a type="button" class="text-primary-500 underline font-bold" [routerLink]="['/register']"
+      >Registrarse aquí</a
+    >
   </p>
 </form>

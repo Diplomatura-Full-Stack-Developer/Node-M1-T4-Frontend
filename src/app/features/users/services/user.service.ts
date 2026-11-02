@@ -1,7 +1,7 @@
 import { inject, Service, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { IUser } from '../interfaces/user.interface';
-import { catchError, of, BehaviorSubject } from 'rxjs';
+import { catchError, of } from 'rxjs';
 
 @Service()
 export class UserService {
@@ -11,52 +11,17 @@ export class UserService {
   private http = inject(HttpClient);
 
 
-  users = signal<IUser[]>([]);
+  user = signal<IUser | undefined>(undefined);
 
-  getUsers(): void {
-    this.http.get<IUser[]>(`${this.apiUrl}/users`).pipe(
-      catchError((error) => {
-        this._error.set(`Error loading users: ${error.message}`);
-        return of([]);
+  loginUser(email: string, password: string): void {
+    this.http.post<IUser & { _id?: string }>(`${this.apiUrl}/user/login`, { email, password }).pipe(
+      catchError((error: { message: string }) => {
+        return of(null);
       }),
-    ).subscribe((data) => {
-      this.users.set(data);
+    ).subscribe((response) => {
+      const raw = response as unknown as IUser & { _id?: string };
+      this.user.set(raw ? raw as IUser : undefined);
     });
   }
 
-  private readonly sessionSubject = new BehaviorSubject<IUser | undefined>(
-    this.readStoredSession(),
-  );
-  readonly session$ = this.sessionSubject.asObservable();
-  private readStoredSession(): IUser | undefined {
-    const stored = localStorage.getItem('session');
-    if (stored === null) {
-      return undefined;
-    }
-    return JSON.parse(stored) as IUser;
-  }
-
-  private readonly _error = signal<string | null>(null);
-  readonly error = this._error.asReadonly();
-
-  registerUser(user: IUser): void {
-    this.users.update((users) => [...users, user]);
-  }
-
-  loginUser(email: string, password: string): void {
-    const user = this.users().find(
-      (item) => item.email === email && item.password === password,
-    );
-    this.sessionSubject.next(user);
-    if (user) {
-      localStorage.setItem('session', JSON.stringify(user));
-    }
-  }
-
-  logoutUser(): void {
-    this.sessionSubject.next(undefined);
-    localStorage.removeItem('session');
-  } deleteUser(id: string): void {
-    this.users.update((users) => users.filter((user) => user.id !== id));
-  }
 }

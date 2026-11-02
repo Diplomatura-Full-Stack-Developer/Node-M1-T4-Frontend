@@ -2,7 +2,7 @@ import { Component, computed } from '@angular/core';
 import { FormBuilder } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { inject } from '@angular/core';
-import { PRODUCT_FORM_SCHEMA, ProductField, fieldErrorMessage } from '../../validators/product-form.validator';
+import { PRODUCT_FORM_SCHEMA, ProductField, fieldErrorMessage } from '../../../cart/pages/validators/product-form.validator';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialogModule } from '@angular/material/dialog';
 import { NgClass } from '@angular/common';

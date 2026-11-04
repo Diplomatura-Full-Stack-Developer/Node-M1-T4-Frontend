@@ -1,26 +1,30 @@
 import { Component, inject } from '@angular/core';
-import { ProductService } from '../../../products/services/product.service';
+import { CartService } from '../../services/cart.service';
 import { CurrencyPipe } from '@angular/common';
 import { computed } from '@angular/core';
-
+import { UserService } from '../../../users/services/user.service';
+import { MatIconModule } from '@angular/material/icon';
 @Component({
   selector: 'app-products-cart',
-  imports: [CurrencyPipe],
+  imports: [CurrencyPipe, MatIconModule],
   templateUrl: './products-cart.html',
 })
 export default class ProductsCart {
 
-  private productService = inject(ProductService);
+  private cartService = inject(CartService);
+  private user = inject(UserService);
 
-  products = computed(() => this.productService.products());
+  products = computed(() => this.cartService.productsCart());
+
 
   ngOnInit(): void {
-    this.productService.getProducts();
-
+    if (this.user.user()) {
+      this.cartService.getUserCart();
+    }
   }
 
-  // removeProductFromCart(id: string): void {
-  //   this.productService.removeProductFromCart(id);
-  // }
+  removeProductFromCart(id: string): void {
+    this.cartService.removeProductFromCart(id);
+  }
 
 }

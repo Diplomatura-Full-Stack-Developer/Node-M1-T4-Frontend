@@ -48,11 +48,16 @@ export class Register {
       return;
     }
 
-    const user: IUser = {
-      ...this.userForm.value,
-      id: crypto.randomUUID(),
-      createdAt: new Date(),
-    } as unknown as IUser;
+    const userToRegister = {
+      name: this.userForm.value.name as string,
+      email: this.userForm.value.email as string,
+      password: this.userForm.value.password as string,
+    };
+
+
+
+
+    this.userService.registerUser(userToRegister as IUser);
 
 
     this.userForm.reset();

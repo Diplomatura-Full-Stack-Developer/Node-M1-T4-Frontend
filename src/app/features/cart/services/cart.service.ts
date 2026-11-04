@@ -1,75 +1,94 @@
 import { IProduct } from "../../products/interfaces/product.interface";
-import { ProductService } from "../../products/services/product.service";
-import { signal } from "@angular/core";
+import { computed, signal } from "@angular/core";
 import { inject } from "@angular/core";
 import { ICartProduct } from "../interfaces/cart.interface";
 import { HttpClient } from "@angular/common/http";
 import { Service } from "@angular/core";
 import { IUser } from "../../users/interfaces/user.interface";
-
+import { UserService } from "../../users/services/user.service";
+import { Router } from "@angular/router";
 
 @Service()
 export class CartService {
 
   private readonly http = inject(HttpClient);
+  private userService = inject(UserService);
+  private router = inject(Router);
+
   private apiUrl = 'http://localhost:3000';
+  user = computed(() => this.userService.user() as unknown as IUser | null);
 
-  private products = inject(ProductService);
-  private cart = signal<IProduct[]>([]);
+  userCart = signal<{ cartId: string, products: ICartProduct[], total: number, userId: string }>({ cartId: '', products: [], total: 0, userId: this.user()?._id as unknown as string });
 
+  productsCart = signal<ICartProduct[]>([]);
 
+  getUserCart(): void {
+    const userId = this.user()?._id;
+    if (!userId) {
+      this.productsCart.set([]);
+      return;
+    }
 
+    this.http.get<{ cartId: string; products: { productId: string; quantity: number }[]; total: number }>(
+      `${this.apiUrl}/cart/${userId}`,
+    ).subscribe({
+      next: (res) => {
+        const lines = res.products ?? [];
+        this.userCart.set({
+          cartId: res.cartId ?? '',
+          products: [],
+          total: res.total ?? 0,
+          userId,
+        });
+        if (lines.length === 0) {
+          this.productsCart.set([]);
+          return;
+        }
+        this.loadProducts(lines);
+      },
+      error: () => {
+        this.productsCart.set([]);
+      },
+    });
+  }
 
-
-  addProductToCart(product: IProduct, quantity: number, user: string): void {
-
-
-    // console.log(product, quantity, user);
-    // const catalog = this.products().find((item) => item.id === product.id);
-    // if (!catalog || catalog.stock <= 0) {
-    //   return;
-    // }
-
-    // const inCart = this.cart().find((item) => item.id === product.id);
-
-    // if (inCart) {
-    //   if (inCart.stock <= 0) {
-    //     return;
-    //   }
-    //   this.cart.update((list) =>
-    //     list.map((item) =>
-    //       item.id === product.id
-    //         ? { ...item, stock: item.stock - 1, quantity: item.quantity + 1 }
-    //         : item,
-    //     ),
-    //   );
-    // } else {
-    //   this.cart.update((list) => [
-    //     ...list,
-    //     { ...catalog, stock: catalog.stock - 1, quantity: 1 },
-    //   ]);
-    // }
+  private loadProducts(cartItems: { productId: string; quantity: number }[]): void {
+    this.productsCart.set([]);
+    cartItems.forEach((cartItem) => {
+      this.http.get<{ data: IProduct }>(`${this.apiUrl}/products/${cartItem.productId}`).subscribe({
+        next: (res) => {
+          const item: ICartProduct = { ...res.data, id: res.data.id ?? cartItem.productId, quantity: cartItem.quantity };
+          this.productsCart.update((current) => [...current, item]);
+        },
+      });
+    });
   }
 
 
-  removeProductFromCart(id: string): void {
-    // this.cart.update((list) =>
-    //   list
-    //     .map((item) =>
-    //       item.id === id
-    //         ? { ...item, stock: item.stock + 1, quantity: item.quantity - 1 }
-    //         : item,
-    //     )
-    //     .filter((item) => item.quantity > 0),
-    // );
+  addProductToCart(userId: string, productId: string): void {
+
+    if (this.userCart().cartId !== '') {
+      this.http.post(`${this.apiUrl}/cart/${this.userCart().cartId}/products`, { productId }).subscribe((res: any) => {
+        this.userCart.set({ cartId: res.cartId, products: res.products, total: res.total, userId: this.user()?._id as unknown as string });
+        this.router.navigate(['/products-cart']);
+      });
+    }
+    else {
+      this.http.post(`${this.apiUrl}/cart`, { userId: this.user()?._id as unknown as string, productId: productId }).subscribe((res: any) => {
+        this.userCart.set({ cartId: res.cartId, products: res.products, total: res.total, userId: this.user()?._id as unknown as string });
+        this.router.navigate(['/products-cart']);
+      });
+    }
   }
 
-  totalQuantityInCart(): number {
-    return this.cart().reduce((acc, product) => acc + (product as ICartProduct).quantity, 0);
+
+  removeProductFromCart(productId: string): void {
+    const cartId = this.userCart().cartId;
+    this.http
+      .delete(`${this.apiUrl}/cart/${cartId}/products/${productId}`)
+      .subscribe(() => {
+        this.getUserCart();
+      });
   }
-
-
-
-
 }
 

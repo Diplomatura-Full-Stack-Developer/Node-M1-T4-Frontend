@@ -22,7 +22,9 @@ export class Header {
   private userService = inject(UserService);
   public cartService = inject(CartService);
 
-  // totalCartQuantity = computed(() => this.productService.totalQuantityInCart());
+  totalCartQuantity = computed(() =>
+    this.cartService.productsCart().reduce((total, item) => total + item.quantity, 0),
+  );
 
   user = computed(() => this.userService.user() as unknown as IUser | undefined);
   setTitle = computed(() => this.user()?.name ? `Hola, ${this.user()?.name}` : 'Angular');
@@ -30,6 +32,10 @@ export class Header {
   openCart = () => {
     this.router.navigate(['/products-cart']);
   };
+
+  ngOnInit(): void {
+    this.cartService.getUserCart();
+  }
 
 
 }

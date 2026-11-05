@@ -7,7 +7,7 @@ import { Service } from "@angular/core";
 import { IUser } from "../../users/interfaces/user.interface";
 import { UserService } from "../../users/services/user.service";
 import { Router } from "@angular/router";
-
+import { environment } from "../../../../environments/environment";
 @Service()
 export class CartService {
 
@@ -15,7 +15,7 @@ export class CartService {
   private userService = inject(UserService);
   private router = inject(Router);
 
-  private apiUrl = 'http://localhost:3000';
+  private apiUrl = environment.apiUrl;
   user = computed(() => this.userService.user() as unknown as IUser | null);
 
   userCart = signal<{ cartId: string, products: ICartProduct[], total: number, userId: string }>({ cartId: '', products: [], total: 0, userId: this.user()?._id as unknown as string });

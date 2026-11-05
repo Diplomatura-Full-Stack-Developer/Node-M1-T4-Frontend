@@ -2,13 +2,13 @@ import { inject, Service, signal } from '@angular/core';
 import { IProduct } from '../interfaces/product.interface';
 import { HttpClient } from '@angular/common/http';
 import { catchError, of } from 'rxjs';
-
+import { environment } from '../../../../environments/environment';
 
 
 @Service()
 export class ProductService {
 
-  private apiUrl = 'http://localhost:3000';
+  private apiUrl = environment.apiUrl;
 
   private http = inject(HttpClient);
 

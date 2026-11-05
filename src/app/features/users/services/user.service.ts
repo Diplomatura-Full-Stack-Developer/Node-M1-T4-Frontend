@@ -2,11 +2,11 @@ import { inject, Service, signal } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { IUser } from '../interfaces/user.interface';
 import { catchError, of } from 'rxjs';
-
+import { environment } from '../../../../environments/environment';
 @Service()
 export class UserService {
 
-  private apiUrl = 'http://localhost:3000';
+  private apiUrl = environment.apiUrl;
 
   private http = inject(HttpClient);
 

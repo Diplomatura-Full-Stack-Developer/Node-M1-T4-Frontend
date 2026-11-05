@@ -9,7 +9,7 @@ import {
     as fieldErrorMessageUser
 } from '../../validators/user-form.validator';
 import { RouterLink } from '@angular/router';
-
+import { CartService } from '../../../cart/services/cart.service';
 
 @Component({
   selector: 'app-login',
@@ -21,8 +21,9 @@ export class Login {
   title: string = 'Iniciar sesión';
 
   private formBuilder = inject(FormBuilder);
-  private dialog = inject(MatDialog); // TODO: Implementar el dialog de confirmación
+  private dialog = inject(MatDialog); // TODO: Implementthar el dialog de confirmación
   private userService = inject(UserService);
+  private userCart = inject(CartService);
   private router = inject(Router);
 
 
@@ -40,9 +41,6 @@ export class Login {
     return fieldErrorMessageUser(field, this.userForm.controls[field]);
   }
 
-  ngOnInit() {
-  }
-
 
   onSubmit() {
     if (this.userForm.invalid) {
@@ -52,6 +50,7 @@ export class Login {
     }
 
     this.userService.loginUser(this.userForm.value.email as string, this.userForm.value.password as string);
+    this.userCart.getUserCart();
     this.userForm.reset();
     this.router.navigate(['']);
   }

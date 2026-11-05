@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { IUser } from '../interfaces/user.interface';
 import { catchError, of } from 'rxjs';
 import { environment } from '../../../../environments/environment';
+import { CartService } from '../../cart/services/cart.service';
 @Service()
 export class UserService {
 
@@ -21,6 +22,7 @@ export class UserService {
     ).subscribe((response) => {
       const raw = response as unknown as IUser & { _id?: string };
       this.user.set(raw ? raw as IUser : undefined);
+
     });
   }
 

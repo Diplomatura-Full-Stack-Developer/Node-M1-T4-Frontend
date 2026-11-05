@@ -45,8 +45,6 @@ export class Navbar {
     ])
   ]);
 
-
-
   logout = () => {
     this.userService.user.set(undefined);
   };

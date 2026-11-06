@@ -17,8 +17,14 @@
   @if (error(); as errorMessage) {
     <div class="text-accent-600 text-center text-2xl font-bold">{{ errorMessage }}</div>
   } @else {
-    @for (product of filteredProducts(); track product.id) {
-      <app-product-card [product]="product"></app-product-card>
+    @if (isLoading()) {
+      @for (placeholder of [1, 2, 3, 4, 5, 6]; track placeholder) {
+        <app-skeleton />
+      }
+    } @else {
+      @for (product of filteredProducts(); track product.id) {
+        <app-product-card [product]="product"></app-product-card>
+      }
     }
   }
 </div>

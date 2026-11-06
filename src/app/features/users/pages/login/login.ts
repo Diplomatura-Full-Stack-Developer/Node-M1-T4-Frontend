@@ -1,6 +1,6 @@
 import { Component, inject } from '@angular/core';
 import { FormBuilder, ReactiveFormsModule } from '@angular/forms';
-import { MatDialog, MatDialogModule } from '@angular/material/dialog';
+import { MatDialogModule } from '@angular/material/dialog';
 import { NgClass } from '@angular/common';
 import { UserService } from '../../services/user.service';
 import { Router } from '@angular/router';
@@ -9,7 +9,6 @@ import {
     as fieldErrorMessageUser
 } from '../../validators/user-form.validator';
 import { RouterLink } from '@angular/router';
-import { CartService } from '../../../cart/services/cart.service';
 
 @Component({
   selector: 'app-login',
@@ -21,9 +20,7 @@ export class Login {
   title: string = 'Iniciar sesión';
 
   private formBuilder = inject(FormBuilder);
-  private dialog = inject(MatDialog); // TODO: Implementthar el dialog de confirmación
   private userService = inject(UserService);
-  private userCart = inject(CartService);
   private router = inject(Router);
 
 
@@ -50,7 +47,6 @@ export class Login {
     }
 
     this.userService.loginUser(this.userForm.value.email as string, this.userForm.value.password as string);
-    this.userCart.getUserCart();
     this.userForm.reset();
     this.router.navigate(['']);
   }

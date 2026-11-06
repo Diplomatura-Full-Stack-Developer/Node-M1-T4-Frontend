@@ -4,15 +4,19 @@ import { CurrencyPipe } from '@angular/common';
 import { computed } from '@angular/core';
 import { UserService } from '../../../users/services/user.service';
 import { MatIconModule } from '@angular/material/icon';
+import { Skeleton } from '../../../../shared/ui/skeleton/skeleton/skeleton';
 @Component({
   selector: 'app-products-cart',
-  imports: [CurrencyPipe, MatIconModule],
+  imports: [CurrencyPipe, MatIconModule, Skeleton],
   templateUrl: './products-cart.html',
 })
 export default class ProductsCart {
 
-  private cartService = inject(CartService);
   private user = inject(UserService);
+
+  private cartService = inject(CartService);
+
+  isLoading = computed(() => this.cartService.isLoading());
 
   products = computed(() => this.cartService.productsCart());
 

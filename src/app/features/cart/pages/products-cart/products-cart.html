@@ -1,70 +1,78 @@
-<div class="bg-primary-100 p-4 mx-16 my-4 shadow-lg rounded-lg hidden md:block">
-  <table class="table-auto w-full">
-    <thead class="text-left">
-      <tr>
-        <th>Categoría</th>
-        <th>Marca</th>
-        <th>Modelo</th>
-        <th>Precio</th>
-        <th>Stock</th>
-        <th>Cantidad</th>
-        <th></th>
-      </tr>
-    </thead>
-    <tbody class="text-left w-full">
-      @for (product of products(); track product.id) {
+@if (isLoading()) {
+  <div class="flex flex-col gap-4 p-4">
+    @for (placeholder of [1, 2]; track placeholder) {
+      <app-skeleton variant="cart" />
+    }
+  </div>
+} @else {
+  <div class="bg-primary-100 p-4 mx-16 my-4 shadow-lg rounded-lg hidden md:block">
+    <table class="table-auto w-full">
+      <thead class="text-left">
         <tr>
-          <td>{{ product.category }}</td>
-          <td>{{ product.brand }}</td>
-          <td>{{ product.model }}</td>
-          <td>{{ product.price | currency: 'ARS' : 'symbol-narrow' : '1.2-2' }}</td>
-          <td>{{ product.stock }}</td>
-          <td>{{ product.quantity }}</td>
-          <td>
-            <button
-              matIconButton
-              (click)="removeProductFromCart(product.id)"
-              class="text-accent-600! hover:text-accent-700! cursor-pointer"
-            >
-              <mat-icon>delete</mat-icon>
-            </button>
-          </td>
+          <th>Categoría</th>
+          <th>Marca</th>
+          <th>Modelo</th>
+          <th>Precio</th>
+          <th>Stock</th>
+          <th>Cantidad</th>
+          <th></th>
         </tr>
-      }
-    </tbody>
-  </table>
-</div>
+      </thead>
+      <tbody class="text-left w-full">
+        @for (product of products(); track product.id) {
+          <tr>
+            <td>{{ product.category }}</td>
+            <td>{{ product.brand }}</td>
+            <td>{{ product.model }}</td>
+            <td>{{ product.price | currency: 'ARS' : 'symbol-narrow' : '1.2-2' }}</td>
+            <td>{{ product.stock }}</td>
+            <td>{{ product.quantity }}</td>
+            <td>
+              <button
+                matIconButton
+                (click)="removeProductFromCart(product.id)"
+                class="text-accent-600! hover:text-accent-700! cursor-pointer"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  </div>
 
-<div class="flex flex-col gap-4 p-4 md:hidden">
-  <article class="flex justify-between items-center">
-    <dl class="w-full">
-      @for (product of products(); track product.id) {
-        <div class="flex flex-col gap-2 border-b p-4 bg-primary-100 rounded-lg shadow-lg m-4">
-          <dt><span class="font-bold">Categoría:</span> {{ product.category }}</dt>
-          <dt><span class="font-bold">Marca:</span> {{ product.brand }}</dt>
-          <dt><span class="font-bold">Modelo:</span> {{ product.model }}</dt>
-          <dt>
-            <span class="font-bold">Precio:</span>
-            {{ product.price | currency: 'ARS' : 'symbol-narrow' : '1.2-2' }}
-          </dt>
-          <dt><span class="font-bold">Stock:</span> {{ product.stock }}</dt>
-          <dt><span class="font-bold">Cantidad:</span> {{ product.quantity }}</dt>
-          <dt>
-            <button
-              matIconButton
-              (click)="removeProductFromCart(product.id)"
-              class="text-accent-600! hover:text-accent-700! cursor-pointer"
-            >
-              <mat-icon>delete</mat-icon>
-            </button>
-          </dt>
-        </div>
-      }
-    </dl>
-  </article>
-</div>
+  <div class="flex flex-col gap-4 p-4 md:hidden">
+    <article class="flex justify-between items-center">
+      <dl class="w-full">
+        @for (product of products(); track product.id) {
+          <div class="flex flex-col gap-2 border-b p-4 bg-primary-100 rounded-lg shadow-lg m-4">
+            <dt><span class="font-bold">Categoría:</span> {{ product.category }}</dt>
+            <dt><span class="font-bold">Marca:</span> {{ product.brand }}</dt>
+            <dt><span class="font-bold">Modelo:</span> {{ product.model }}</dt>
+            <dt>
+              <span class="font-bold">Precio:</span>
+              {{ product.price | currency: 'ARS' : 'symbol-narrow' : '1.2-2' }}
+            </dt>
+            <dt><span class="font-bold">Stock:</span> {{ product.stock }}</dt>
+            <dt><span class="font-bold">Cantidad:</span> {{ product.quantity }}</dt>
+            <dt>
+              <button
+                matIconButton
+                (click)="removeProductFromCart(product.id)"
+                class="text-accent-600! hover:text-accent-700! cursor-pointer"
+              >
+                <mat-icon>delete</mat-icon>
+              </button>
+            </dt>
+          </div>
+        }
+      </dl>
+    </article>
+  </div>
+}
 
-@if (products().length === 0) {
+@if (!isLoading() && !products().length) {
   <h2 class="text-2xl font-bold text-center text-primary-500! mt-10">
     No hay productos en el carrito
   </h2>

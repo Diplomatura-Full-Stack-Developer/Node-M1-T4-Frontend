@@ -15,6 +15,8 @@ export class ProductService {
 
   products = signal<IProduct[]>([]);
 
+  isLoading = signal<boolean>(false);
+
   private readonly _error = signal<string | null>(null);
   readonly error = this._error.asReadonly();
 
@@ -26,20 +28,24 @@ export class ProductService {
   }
 
   getProducts(): void {
+    this.isLoading.set(true);
     this.http
       .get<Array<IProduct & { _id?: string }>>(`${this.apiUrl}/products`)
       .pipe(
         catchError((error: { message: string }) => {
           this._error.set(`Error loading products: ${error.message}`);
+          this.isLoading.set(false);
           return of([]);
         }),
       )
       .subscribe((data) => {
         this.products.set(data.map((item) => this.toProduct(item)));
+        this.isLoading.set(false);
       });
   }
 
   getProductById(id: string): void {
+    this.isLoading.set(true);
     this.http
       .get<{ message: string; data: IProduct & { _id?: string } }>(
         `${this.apiUrl}/products/${id}`,
@@ -47,12 +53,14 @@ export class ProductService {
       .pipe(
         catchError((error: { message: string }) => {
           this._error.set(`Error loading product: ${error.message}`);
+          this.isLoading.set(false);
           return of(null);
         }),
       )
       .subscribe((response) => {
         const raw = response?.data;
         this.products.set(raw ? [this.toProduct(raw)] : []);
+        this.isLoading.set(false);
       });
   }
 
@@ -76,7 +84,5 @@ export class ProductService {
   searchProducts(search: string) {
     return this.products().filter((p) => p.category.toLowerCase().includes(search.toLowerCase()));
   }
-
-
 
 }

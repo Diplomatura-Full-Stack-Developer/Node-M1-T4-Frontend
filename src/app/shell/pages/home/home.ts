@@ -5,9 +5,10 @@ import { RouterLink } from '@angular/router';
 import { ProductService } from '../../../features/products/services/product.service';
 import { computed } from '@angular/core';
 import { signal } from '@angular/core';
+import { Skeleton } from '../../../shared/ui/skeleton/skeleton/skeleton';
 @Component({
   selector: 'app-home',
-  imports: [RouterLink, ProductCard],
+  imports: [RouterLink, ProductCard, Skeleton],
   templateUrl: './home.html',
 })
 export class Home implements OnInit {
@@ -19,6 +20,8 @@ export class Home implements OnInit {
   products = computed(() =>
     this.productService.products().filter((p) => !p.deleted),
   );
+
+  isLoading = computed(() => this.productService.isLoading());
 
   ngOnInit(): void {
     this.productService.getProducts();

@@ -5,7 +5,6 @@ import { computed } from '@angular/core';
 import { ProductService } from '../../features/products/services/product.service';
 import { Router } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
-import { toSignal } from '@angular/core/rxjs-interop';
 import { IUser } from '../../features/users/interfaces/user.interface';
 import { CartService } from '../../features/cart/services/cart.service'
 
@@ -32,10 +31,6 @@ export class Header {
   openCart = () => {
     this.router.navigate(['/products-cart']);
   };
-
-  ngOnInit(): void {
-    this.cartService.getUserCart();
-  }
 
 
 }

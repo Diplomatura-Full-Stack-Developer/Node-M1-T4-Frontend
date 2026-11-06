@@ -41,6 +41,8 @@ npm install
 ng serve
 ```
 
+Tener en cuenta que el backend tiene que estar en ejecución para que la aplicación funcione correctamente.
+
 ### Pasos para el despliegue:
 
 1. Iniciar sesión en Firebase:

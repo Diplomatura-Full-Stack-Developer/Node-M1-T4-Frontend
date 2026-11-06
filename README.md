@@ -18,8 +18,9 @@ Realizar peticiones reales y preparar ambos entornos para despliegue.
 
 - Se implementa el funcionamiento del carrito de tal forma que en la base de datos se mantenga la persistencia del carrito del usuario activo. Por lo tanto, el usuario debe loguearse para poder ver el carrito.
 - En el esquema del carrito no se repiten los datos del producto, sino que se crea una relación entre el carrito y los productos cargados y entre el carrito y el usuario. De esta forma existirá una relación uno a uno entre el carrito y el usuario.
-- Se crea un componente skeleton que permite mostrar un loading mientras se cargan los cards de los productos en la página de inicio y además en la página de carrito. Para ello, se reutiliza el componente skeleton diferenciando su funcionalidad por medio del atributo variant.
+- Se crea un componente skeleton que permite mostrar un loading (indicador de carga) mientras se cargan los cards de los productos en la página de inicio y además en la página de carrito. Para ello, se reutiliza el componente skeleton diferenciando su funcionalidad por medio del atributo variant.
 - El frontend de la aplicación se despliega en Firebase Hosting.
+- No se adjuntan imágenes de pantallas, ya que la aplicación se puede ver funcionando desde el link indicado más adelante.
 
 ### Pasos para la ejecución local:
 
